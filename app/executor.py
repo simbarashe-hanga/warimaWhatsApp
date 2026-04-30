@@ -1,44 +1,43 @@
-from app.ledger import (
-    record_contribution,
-    get_balance,
-    get_group_balance,
-)
+from app.services.transaction_service import create_or_get_transaction
 
-
-def handle_intent(intent_data, context, sender, db, user):
+def handle_intent(intent_data, context, user_id, db):
     intent = intent_data.get("intent")
-    amount = intent_data.get("amount")
 
-    if intent == "contribute":
+    context = context or {}
+
+    response = "Sorry, I don't understand."
+    new_context = context
+    next_action = None
+
+    if intent == "greeting":
+        response = "Hey! Type 'contribute' to get started."
+
+    elif intent == "start_contribution":
+        response = "How much would you like to contribute?"
+        new_context = {"flow": "contribution", "step": "awaiting_amount"}
+
+    elif intent == "provide_amount":
+        amount = intent_data.get("amount")
+        response = f"Confirm R{amount}? Reply 1 to confirm, 2 to cancel."
+        new_context = {
+            "flow": "contribution",
+            "step": "awaiting_confirmation",
+            "amount": amount
+        }
+
+    elif intent == "confirm":
+        amount = context.get("amount")
+
         if not amount:
-            return (
-                "How much would you like to contribute?",
-                {"awaiting_amount": True}
-            )
-
-        # 1. Save to Database
-        record_contribution(db, user, amount, user.group_id)
-
-        return (
-            f"You contibuted R{amount}",
-            {} # clear context
-        )
-
-    if intent == "balance":
-        user_balance = get_balance(db, sender)
-
-        if user.group_id:
-            group_balance = get_group_balance(db, user.group_id)
+            response = "No amount found. Start again with 'contribute'."
         else:
-            group_balance = 0.0
+            txn = create_or_get_transaction(db, user_id, amount)
+            response = f"Contribution of R{amount} received. Transaction ID: {txn.id}"
 
-        return (
-            f"Your balance: R{user_balance:.2f}\n"
-            f"Group pool: R{group_balance:.2f}",
-            context
-        )
+        new_context = None
 
-    if intent == "payout":
-        return ("Payout not ready yet", {})
+    elif intent == "cancel":
+        response = "Cancelled. Type 'contribute' to start again."
+        new_context = None
 
-    return ("Hi Send 'Contribute' to get started.", {})
+    return response, new_context, next_action
