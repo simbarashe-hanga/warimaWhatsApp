@@ -1,16 +1,10 @@
 def extract_message(payload):
     try:
-        entry = payload["entry"][0]
-        changes = entry["changes"][0]
-        value = changes["value"]
-
-        if "messages" not in value:
-            return None
-
-        message = value["messages"][0]
+        message = payload["entry"][0]["changes"][0]["value"]["messages"][0]
         sender = message["from"]
+        message_id = message["id"]
 
-        return message, sender
+        return message, sender, message_id
 
     except Exception:
         return None

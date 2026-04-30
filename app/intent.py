@@ -1,3 +1,5 @@
+import re
+
 def detect_intent(text: str, context: dict):
     text = text.lower()
 
@@ -23,10 +25,5 @@ def detect_intent(text: str, context: dict):
 
 
 def extract_amount(text: str):
-    words = text.split()
-
-    for word in words:
-        if word.isdigit():
-            return int(word)
-
-    return None
+    match = re.search(r"\d+(\.\d+)?", text)
+    return float(match.group()) if match else None
