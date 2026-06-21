@@ -69,10 +69,19 @@ async def process_message(db, event):
             limit=10
         )
 
-        response = await chat(
-            user_message=text,
-            history=history
-        )
+        try:
+            response = await chat(
+                user_message=text,
+                history=history
+            )
+
+        except Exception as e:
+            print("LLM ERROR:", e)
+
+            response = (
+                "Warima AI is temporarily unavailable."
+                "Please try again shortly."
+            )
 
         print("LLM RESPONSE:", response)
 
