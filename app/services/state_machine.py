@@ -21,7 +21,7 @@ async def handle_state(db, user_id: str, text: str):
 
     intent_data = detect_intent(text, session.context or {})
 
-    response, new_context = handle_intent(
+    response, new_context, _ = handle_intent(
         intent_data,
         session.context,
         user_id,

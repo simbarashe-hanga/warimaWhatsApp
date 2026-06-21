@@ -6,9 +6,8 @@ async def send_message(user_id: str, text: str):
     token = os.getenv("WHATSAPP_TOKEN")
     phone_id = os.getenv("WHATSAPP_PHONE_ID")
 
-    print("🔥 send_message CALLED")
-    print("TOKEN:", token)
-    print("PHONE:", phone_id)
+    if not token or not phone_id:
+        raise Exception("Missing WhatsApp env vars")
 
     url = f"https://graph.facebook.com/v25.0/{phone_id}/messages"
 
@@ -28,6 +27,8 @@ async def send_message(user_id: str, text: str):
         response = await client.post(url, headers=headers, json=payload)
 
     # Debug log
+    print("PAYLOAD SENT:", payload)
+    print("RESPONSE:", response.json())
     print("STATUS:", response.status_code)
     print("RESPONSE:", response.text)
 

@@ -10,11 +10,15 @@ def handle_intent(intent_data, context, user_id, db):
     next_action = None
 
     if intent == "greeting":
-        response = "Hey! Type 'contribute' to get started."
+        response = "Hey! Type 'contribute' or 'agent' to get started."
 
     elif intent == "start_contribution":
         response = "How much would you like to contribute?"
         new_context = {"flow": "contribution", "step": "awaiting_amount"}
+
+    elif intent == "agent":
+        response= "You are chatting with the Warima A.I Agent"
+        new_context = {"flow": "agent_flow", "step": "chatting"}
 
     elif intent == "provide_amount":
         amount = intent_data.get("amount")
@@ -29,7 +33,7 @@ def handle_intent(intent_data, context, user_id, db):
         amount = context.get("amount")
 
         if not amount:
-            response = "No amount found. Start again with 'contribute'."
+            response = "No amount found. Do you want to chat with 'agent' or 'contribute'."
         else:
             txn = create_or_get_transaction(db, user_id, amount)
             response = f"Contribution of R{amount} received. Transaction ID: {txn.id}"

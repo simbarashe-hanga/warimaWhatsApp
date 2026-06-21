@@ -1,5 +1,5 @@
 def detect_intent(text: str, context: dict):
-    text = text.lower()
+    text = text.lower().strip()
 
     if text in ["hi", "hello", "hey"]:
         return {"intent": "greeting"}
@@ -7,13 +7,16 @@ def detect_intent(text: str, context: dict):
     if "contribute" in text:
         return {"intent": "start_contribution"}
 
-    if text.isdigit():
-        return {"intent": "provide_amount", "amount": int(text)}
+    if "agent" in text:
+        return {"intent": "agent"}
 
     if text == "1":
         return {"intent": "confirm"}
 
     if text == "2":
         return {"intent": "cancel"}
+    
+    if text.isdigit():
+        return {"intent": "provide_amount", "amount": int(text)}
 
     return {"intent": "unknown"}
