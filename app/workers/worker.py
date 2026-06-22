@@ -132,7 +132,7 @@ async def worker_loop():
                 mark_failed(db, event, str(e))
 
         db.close()
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(1)
 
 
 if __name__ == "__main__":

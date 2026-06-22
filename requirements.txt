@@ -1,3 +1,5 @@
+asyncio
+openai
 alembic==1.18.4
 annotated-doc==0.0.4
 annotated-types==0.7.0
@@ -18,7 +20,7 @@ pydantic==2.13.3
 pydantic_core==2.46.3
 python-dotenv==1.2.2
 requests==2.33.1
-SQLAlchemy==2.0.49
+sqlalchemy==2.0.49
 starlette==1.0.0
 typing-inspection==0.4.2
 typing_extensions==4.15.0
