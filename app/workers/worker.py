@@ -118,20 +118,25 @@ async def worker_loop():
     print("Worker started...")
 
     while True:
-        db = SessionLocal()
+        try:
+            db = SessionLocal()
 
-        event = get_and_mark_processing(db)
+            event = get_and_mark_processing(db)
 
-        if event:
-            try:
-                await process_message(db, event)
-                mark_done(db, event)
+            if event:
+                try:
+                    await process_message(db, event)
+                    mark_done(db, event)
 
-            except Exception as e:
-                print("Worker error:", e)
-                mark_failed(db, event, str(e))
+                except Exception as e:
+                    print("Worker error:", e)
+                    mark_failed(db, event, str(e))
 
-        db.close()
+            db.close()
+
+        except Exception as e:
+            print("Database unavailable:", e)
+
         await asyncio.sleep(1)
 
 

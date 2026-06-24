@@ -36,3 +36,8 @@ async def receive_webhook(payload: dict, db: Session = Depends(get_db)):
     print("DONE")
 
     return {"status": "queued"}
+
+
+@router.get("/health")
+def health(db: Session = Depends(get_db)):
+    return {"status": "ok"}

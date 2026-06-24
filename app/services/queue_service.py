@@ -40,11 +40,15 @@ def mark_done(db: Session, event: EventQueue):
     event.status = "DONE"
     db.commit()
 
+MAX_RETRIES = 3
 
-def mark_failed(db: Session, event: EventQueue, error: str = None):
-    event.status = "FAILED"
 
-    if error:
-        event.error = str(error)[:255]
+def mark_failed(db, event, error):
+    if event.attempts < MAX_RETRIES:
+        event.status = "PENDING"
+    else:
+        event.status = "FAILED"
+
+    event.error = str(error)[:255]
 
     db.commit()
